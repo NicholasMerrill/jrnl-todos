@@ -98,6 +98,38 @@ the last five entries containing both ``@pineapple`` **and** ``@lubricant``. You
 
   ``jrnl @pinkie @WorldDomination`` will switch to viewing mode because although **no** command line arguments are given, all the input strings look like tags - *jrnl* will assume you want to filter by tag.
 
+Using Todos
+-----------
+
+Keep track of items you might want to look back on or check in on after some progress by adding a Todo ::
+
+    jrnl "Trouble waking up this morning. @idea: automated bell to help wake people up on time.  [ ] Brainstorm prototype ideas."
+
+You can specify an expected completion date too ::
+
+    jrnl "Excited about this new journal software. Next week, I'll {2015-07-05} write more about how it's working out."
+
+When you're done with a Todo, you can either remove it in the journal entry or mark it complete. See syntax table below for all options.
+
++-------------------------------+---------------------------------------------+
+|  Syntax                       | Meaning                                     |
++===============================+=============================================+
+|``[ ]``                        | incomplete                                  |
++-------------------------------+---------------------------------------------+
+|``[x]``                        | complete                                    |
++-------------------------------+---------------------------------------------+
+|``{2021-06-01}``               | incomplete, due June 1, 2021                |
++-------------------------------+---------------------------------------------+
+|``{2021-06-01}[2015-07-03]``   | completed July 3, 2015, due June 1, 2021    |
++-------------------------------+---------------------------------------------+
+|``{2021-06-01}[x]``            | completed on unknown date, due June 1, 2021 |
++-------------------------------+---------------------------------------------+
+
+.. note::
+
+    Dates must be formatted ``YYYY-MM-DD``.
+
+
 Editing older entries
 ---------------------
 

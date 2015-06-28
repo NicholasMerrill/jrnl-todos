@@ -33,6 +33,36 @@ def to_tag_list(journal):
     return result
 
 
+def to_todo_list(journal):
+    """Prints a list of all todos."""
+    todos = [todo
+             for entry in journal.entries
+             for todo in entry.todos]
+    if not todos:
+        return '[No todos found in journal.]'
+    pending_todos = []
+    completed_todos = []
+    for todo in todos:
+        if todo.is_complete:
+            completed_todos.append(todo)
+        else:
+            pending_todos.append(todo)
+
+    def appendable_header(_text):
+        separator = '=' * len(_text)
+        return "{sep}\n{text}\n{sep}\n".format(sep=separator, text=_text)
+
+    def appendable_todo_list(_todo_list):
+        return "\n".join([todo.to_item_format() for todo in _todo_list])
+
+    result = ""
+    result += appendable_header("Pending")
+    result += appendable_todo_list(pending_todos)
+    result += '\n\n' + appendable_header("Complete")
+    result += appendable_todo_list(completed_todos)
+    return result
+
+
 def to_json(journal):
     """Returns a JSON representation of the Journal."""
     tags = get_tags_count(journal)

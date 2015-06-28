@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import re
 import textwrap
 from datetime import datetime
+from jrnl.Todo import Todo
 
 
 class Entry:
@@ -13,9 +14,19 @@ class Entry:
         self.date = date or datetime.now()
         self.title = title.rstrip("\n ")
         self.body = body.rstrip("\n ")
-        self.tags = self.parse_tags()
+        self.parse_data()  # Loads tags and todos
         self.starred = starred
         self.modified = False
+
+    def get_fulltext(self, lower=True):
+        ret = " " + " ".join([self.title, self.body])
+        if lower:
+            ret = ret.lower()
+        return ret
+
+    def parse_data(self):
+        self.parse_tags()
+        self.parse_todos()
 
     @staticmethod
     def tag_regex(tagsymbols):
@@ -23,11 +34,15 @@ class Entry:
         return re.compile( pattern, re.UNICODE )
 
     def parse_tags(self):
-        fulltext =  " " + " ".join([self.title, self.body]).lower()
+        fulltext = self.get_fulltext()
         tagsymbols = self.journal.config['tagsymbols']
         tags = re.findall( Entry.tag_regex(tagsymbols), fulltext )
         self.tags = tags
         return set(tags)
+
+    def parse_todos(self):
+        self.todos = Todo.parse_entry_todos(self)
+        return self.todos
 
     def __unicode__(self):
         """Returns a string representation of the entry to be written into a journal file."""

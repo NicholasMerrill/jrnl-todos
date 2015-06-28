@@ -3,6 +3,7 @@
 import sys
 import os
 import getpass as gp
+import datetime
 import keyring
 import json
 if "win32" in sys.platform:
@@ -163,3 +164,18 @@ def byte2int(b):
     """Converts a byte to an integer.
     This is equivalent to ord(bs[0]) on Python 2 and bs[0] on Python 3."""
     return ord(b)if PY2 else b
+
+
+def date2string(d):
+    """Converts a date object to the standard formatted date string in YYYY-MM-DD."""
+    if d is None:
+        return None
+    assert isinstance(d, datetime.date)
+    return d.strftime('%Y-%m-%d')
+
+
+def datetime2string(d, journal):
+    if d is None:
+        return None
+    assert isinstance(d, datetime.datetime)
+    return d.strftime(journal.config['timeformat'])

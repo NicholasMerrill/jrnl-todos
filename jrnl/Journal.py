@@ -147,7 +147,7 @@ class Journal(object):
         if current_entry:
             entries.append(current_entry)
         for entry in entries:
-            entry.parse_tags()
+            entry.parse_data()
         return entries
 
     def __unicode__(self):
