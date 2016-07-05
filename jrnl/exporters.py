@@ -33,13 +33,23 @@ def to_tag_list(journal):
     return result
 
 
-def to_todo_list(journal):
-    """Prints a list of all todos."""
+def get_todos(journal):
+    """
+    Returns all todos in a list.
+    :rtype: list[Todo]
+    """
     todos = [todo
              for entry in journal.entries
              for todo in entry.todos]
+    return todos
+
+
+def to_todo_list(journal):
+    """Prints a list of all todos."""
+    todos = get_todos(journal)
     if not todos:
         return '[No todos found in journal.]'
+
     pending_todos = []
     completed_todos = []
     for todo in todos:
@@ -58,7 +68,7 @@ def to_todo_list(journal):
     result = ""
     result += appendable_header("Pending")
     result += appendable_todo_list(pending_todos)
-    result += '\n\n' + appendable_header("Complete")
+    result += '\n\n' + appendable_header("Completed")
     result += appendable_todo_list(completed_todos)
     return result
 
@@ -66,8 +76,10 @@ def to_todo_list(journal):
 def to_json(journal):
     """Returns a JSON representation of the Journal."""
     tags = get_tags_count(journal)
+    todos = get_todos(journal)
     result = {
         "tags": dict((tag, count) for count, tag in tags),
+        "todos": [todo.to_dict() for todo in todos],
         "entries": [e.to_dict() for e in journal.entries]
     }
     return json.dumps(result, indent=2)

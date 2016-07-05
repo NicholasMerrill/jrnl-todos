@@ -107,6 +107,7 @@ class Entry:
             'body': self.body,
             'date': self.date.strftime("%Y-%m-%d"),
             'time': self.date.strftime("%H:%M"),
+            'todos': [todo.to_dict() for todo in self.todos],
             'starred': self.starred
         }
 
