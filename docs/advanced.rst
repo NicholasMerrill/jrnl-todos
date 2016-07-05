@@ -31,6 +31,8 @@ The configuration file is a simple JSON file with the following options and can 
     if ``true``, tags will be highlighted in cyan.
 - ``linewrap``
     controls the width of the output. Set to ``false`` if you don't want to wrap long lines.
+- ``file_suffix``
+    determines what extension temporary files will be named with. Defaults to '.txt'.
 
 .. note::
 
