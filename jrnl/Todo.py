@@ -10,25 +10,25 @@ import datetime
 # Regex pattern definitions
 from jrnl.util import date2string, datetime2string
 
-date_pattern = r'\d\d\d\d\-\d\d\-\d\d'
-status_regex_dict = {
+DATE_PATTERN = r'\d\d\d\d\-\d\d\-\d\d'  # YEAR-MONTH-DAY  e.g. 1984-01-24
+STATUS_REGEX_DICT = {
     r'\[ \]': 'incomplete',
-    r'\{%s\}(?!\[)' % date_pattern: 'incomplete',
+    r'\{%s\}(?!\[)' % DATE_PATTERN: 'incomplete',
     r'\[x\]': 'complete',
-    r'\{%s\}\[x\]' % date_pattern: 'complete',
-    r'\{%(date)s\}\[%(date)s\]' % dict(date=date_pattern): 'complete',
+    r'\{%s\}\[x\]' % DATE_PATTERN: 'complete',
+    r'\{%(date)s\}\[%(date)s\]' % dict(date=DATE_PATTERN): 'complete',
 }
-content_pattern = r' ?(?P<content>.*)'
+CONTENT_PATTERN = r' ?(?P<content>.*)'
 
-any_todos_regex = r''
+ANY_TODOS_REGEX = r''
 # Or's together all possible status patterns.
 i = 0
-for pattern in status_regex_dict.iterkeys():
+for pattern in STATUS_REGEX_DICT.iterkeys():
     if i > 0:
-        any_todos_regex = r'{}|'.format(any_todos_regex)
-    any_todos_regex = r'{}(?:{})'.format(any_todos_regex, pattern)
+        ANY_TODOS_REGEX = r'{}|'.format(ANY_TODOS_REGEX)
+    ANY_TODOS_REGEX = r'{}(?:{})'.format(ANY_TODOS_REGEX, pattern)
     i += 1
-any_todos_regex = re.compile(r'(?P<all>(?:%s)%s)' % (any_todos_regex, content_pattern), re.MULTILINE)
+ANY_TODOS_REGEX = re.compile(r'(?P<all>(?:%s)%s)' % (ANY_TODOS_REGEX, CONTENT_PATTERN), re.MULTILINE)
 
 
 class Todo:
@@ -58,7 +58,7 @@ class Todo:
         if end_pattern is None:
             end_pattern = r''
 
-        regex = re.compile(r'.*%s(?P<date>%s)%s.*' % (start_pattern, date_pattern, end_pattern))
+        regex = re.compile(r'.*%s(?P<date>%s)%s.*' % (start_pattern, DATE_PATTERN, end_pattern))
         match = regex.match(self.text_repr)
         if not match:
             return None
@@ -70,7 +70,7 @@ class Todo:
             return
 
         # Sets status
-        for pattern, status in status_regex_dict.iteritems():
+        for pattern, status in STATUS_REGEX_DICT.iteritems():
             if re.compile(pattern).match(self.text_repr):
                 self.status = status
 
@@ -79,7 +79,7 @@ class Todo:
 
         self.due_date = self.extract_date(r'\{', r'\}')
 
-        match = any_todos_regex.match(self.text_repr)
+        match = ANY_TODOS_REGEX.match(self.text_repr)
         if match is not None:
             self.content = match.group('content')
 
@@ -90,7 +90,7 @@ class Todo:
         :rtype: list[Todo]
         """
         fulltext = entry.get_fulltext(lower=False)
-        todos_matches = [m.group('all') for m in re.finditer(any_todos_regex, fulltext)]
+        todos_matches = [m.group('all') for m in re.finditer(ANY_TODOS_REGEX, fulltext)]
         todos = []
         for match in todos_matches:
             todos.append(Todo(match, entry))
