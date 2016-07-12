@@ -77,10 +77,17 @@ def to_json(journal):
     """Returns a JSON representation of the Journal."""
     tags = get_tags_count(journal)
     todos = get_todos(journal)
+    entry_dicts = []
+    entry_id = 1
+    for entry in journal.entries:
+        entry_dict = entry.to_dict()
+        entry_dict['id'] = entry_id
+        entry_dicts.append(entry_dict)
+        entry_id += 1
     result = {
         "tags": dict((tag, count) for count, tag in tags),
         "todos": [todo.to_dict() for todo in todos],
-        "entries": [e.to_dict() for e in journal.entries]
+        "entries": entry_dicts,
     }
     return json.dumps(result, indent=2)
 
